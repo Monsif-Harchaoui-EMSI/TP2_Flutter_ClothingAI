@@ -1,4 +1,4 @@
-Utilisateurs
+
 Voici deux utilisateurs pour accéder à l'application :
 
 Login : mrmathieu@gmail.com
