@@ -125,14 +125,10 @@ class _BuyScreenState extends State<BuyScreen> {
                             Text('Prix : ${items[currentIndex].price.toStringAsFixed(2)} €'),
                             const SizedBox(height: 10),
 
-                            // Add the instruction message below each item
+                            // Add the message below each item
                             const Text(
                               'Cliquer sur l\'image pour plus de détails!',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.blueGrey,
-                              ),
+                              style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                             ),
                           ],
                         ),
