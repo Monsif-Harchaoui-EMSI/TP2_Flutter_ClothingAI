@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "363754349311",
+    "project_id": "flutteriaproject",
+    "storage_bucket": "flutteriaproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363754349311:android:1ca6de0a7bb8385279a2ca",
+        "android_client_info": {
+          "package_name": "com.monsifharchaouitp2.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXlu4rE6aZiO9UmetM5mSOxnl80MRibXQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
