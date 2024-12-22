@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/clothing_item.dart';
 import '../services/database_service.dart';
+import 'clothing_detail_screen.dart';
 
 class BuyScreen extends StatefulWidget {
   @override
@@ -79,36 +80,63 @@ class _BuyScreenState extends State<BuyScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      items[currentIndex].imageUrl.isNotEmpty
-                          ? Image.network(
-                              items[currentIndex].imageUrl,
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(
-                                  Icons.broken_image,
-                                  size: 100,
-                                  color: Colors.grey,
-                                );
-                              },
-                            )
-                          : const Icon(
-                              Icons.image_not_supported,
-                              size: 100,
-                              color: Colors.grey,
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to the detail screen on tap
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ClothingDetailScreen(item: items[currentIndex]),
                             ),
-                      const SizedBox(height: 20),
-                      Text(
-                        items[currentIndex].title,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            items[currentIndex].imageUrl.isNotEmpty
+                                ? Image.network(
+                                    items[currentIndex].imageUrl,
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(
+                                        Icons.broken_image,
+                                        size: 100,
+                                        color: Colors.grey,
+                                      );
+                                    },
+                                  )
+                                : const Icon(
+                                    Icons.image_not_supported,
+                                    size: 100,
+                                    color: Colors.grey,
+                                  ),
+                            const SizedBox(height: 20),
+                            Text(
+                              items[currentIndex].title,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text('Taille : ${items[currentIndex].size}'),
+                            Text('Prix : ${items[currentIndex].price.toStringAsFixed(2)} €'),
+                            const SizedBox(height: 10),
+
+                            // Add the instruction message below each item
+                            const Text(
+                              'Cliquer sur l\'image pour plus de détails!',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.blueGrey,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Text('Taille : ${items[currentIndex].size}'),
-                      Text('Prix : ${items[currentIndex].price.toStringAsFixed(2)} €'),
                     ],
                   ),
                 ),
