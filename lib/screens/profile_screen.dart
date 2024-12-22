@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/profile_service.dart';
+import 'add_clothing_screen.dart'; // Import AddClothingScreen
+import '../services/tflite_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -9,12 +11,15 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TFLiteService _tfliteService = TFLiteService();
   String email = '';
   String password = '';
   String birthDate = '';
   String address = '';
   String postalCode = '';
   String city = '';
+  String imageUrl = '';
+  String detectedCategory = 'Unknown';
   bool isLoading = true;
 
   @override
@@ -54,8 +59,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       'city': city,
     });
 
-    await ProfileService.updateUserPassword(password);
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Profil mis à jour avec succès')),
     );
@@ -64,6 +67,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
     Navigator.of(context).pushReplacementNamed('/login');
+  }
+
+  Future<void> _classifyImage() async {
+    if (imageUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez entrer un lien d\'image')),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final category = await _tfliteService.classifyImageFromUrl(imageUrl);
+      setState(() {
+        detectedCategory = category ?? 'Unknown';
+      });
+    } catch (e) {
+      print('Error classifying image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors de la classification')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
   @override
@@ -102,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             initialValue: email,
                             readOnly: true,
                             decoration: const InputDecoration(
-                              labelText: 'Login',
+                              labelText: 'Login (Email)',
                               border: OutlineInputBorder(),
                             ),
                           ),
@@ -120,16 +148,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 10),
 
-                          // Birth Date with Format Validation
+                          // Birth Date
                           TextFormField(
                             initialValue: birthDate,
                             onChanged: (value) => birthDate = value,
-                            validator: (value) {
-                              if (value == null || !RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
-                                return 'Veuillez entrer une date valide (JJ/MM/AAAA)';
-                              }
-                              return null;
-                            },
                             decoration: const InputDecoration(
                               labelText: 'Anniversaire (JJ/MM/AAAA)',
                               border: OutlineInputBorder(),
@@ -171,7 +193,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Validate Button
+                          // Add Clothing Button
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddClothingScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            child: const Text('Ajouter un vêtement'),
+                          ),
+                          const SizedBox(height: 20),
+
+                       //   // Image URL Input for Classification
+                        //  TextFormField(
+                         //   onChanged: (value) => imageUrl = value,
+                         //   decoration: const InputDecoration(
+                        //      labelText: 'Lien de l\'image',
+                         //     border: OutlineInputBorder(),
+                         //   ),
+                        //  ),
+                        //  const SizedBox(height: 10),
+
+                          // Classify Image Button
+                        //  ElevatedButton(
+                        //    onPressed: _classifyImage,
+                        //    child: const Text('Classifier l\'image'),
+                       //   ),
+                       //   const SizedBox(height: 10),
+
+                          // Detected Category Display
+                       //   Text(
+                        //    'Catégorie détectée : $detectedCategory',
+                        //    style: const TextStyle(fontSize: 16),
+                       //   ),
+                        //  const SizedBox(height: 20),
+//
+                          // Save Profile Button
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.teal,
