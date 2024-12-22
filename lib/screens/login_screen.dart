@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
-import '../widgets/custom_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -10,7 +9,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clothing App De Monsif'),
+        title: const Text('Connexion'),
         backgroundColor: Colors.teal,
       ),
       body: Padding(
@@ -18,23 +17,30 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomTextField(
+            TextField(
               controller: emailController,
-              label: 'Login',
-              isPassword: false,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 16),
-            CustomTextField(
+            TextField(
               controller: passwordController,
-              label: 'Password',
-              isPassword: true,
+              decoration: const InputDecoration(labelText: 'Mot de passe'),
+              obscureText: true,
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () async {
-                String email = emailController.text.trim();
-                String password = passwordController.text.trim();
-                await AuthService.signIn(email, password, context);
+                try {
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
+                  );
+                  // La redirection se fera automatiquement via AuthenticationWrapper
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erreur: ${e.toString()}')),
+                  );
+                }
               },
               child: const Text('Se connecter'),
             ),
